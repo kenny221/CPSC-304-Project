@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class QueryEngine {
-	public static Connection c;
+	private static Connection c;
 
 	/**
 	 * Adds a new trainer to the database.
