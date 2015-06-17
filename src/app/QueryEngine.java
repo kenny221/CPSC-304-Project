@@ -1,4 +1,5 @@
 package app;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -870,19 +871,29 @@ public class QueryEngine {
 		return r.nextInt((max - min) + 1) + min;
 	}
 
-	public static void main(String[] args) {
+	/**
+	 * Connects to the database.
+	 */
+	public static void initializeConnection() {
 		try {
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 
 			c = DriverManager.getConnection(
 					"jdbc:oracle:thin:@dbhost.ugrad.cs.ubc.ca:1522:ug",
 					"ora_d6x8", "a65826083");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
+	/**
+	 * Closes the connection to the database.
+	 */
+	public static void closeConnection() {
+		try {
 			c.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
-		System.out.println("Done");
 	}
 }
