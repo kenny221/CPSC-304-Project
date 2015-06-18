@@ -58,6 +58,8 @@ public class GUI {
 		menuBar.add(showMenu);
 		JMenu updateMenu = new JMenu("Update");
 		menuBar.add(updateMenu);
+		JMenu avgMenu = new JMenu("AVG");
+		menuBar.add(avgMenu);
 		JMenu minMenu = new JMenu("MIN");
 		menuBar.add(minMenu);
 		JMenu maxMenu = new JMenu("MAX");
@@ -247,13 +249,15 @@ public class GUI {
 							frame, "Enter the consumable name", "Customized Dialog",
 							JOptionPane.PLAIN_MESSAGE, null, null, null);
 
-					if (consumable == null || consumable.isEmpty() || consumable.matches("^.*[^a-zA-Z0-9 ].*$")) {
+					if (consumable == null || consumable.isEmpty()
+							|| consumable.matches("^.*[^a-zA-Z0-9 ].*$")) {
 						consumable = (String) JOptionPane.showInputDialog(
 								frame, "Please enter a valid consumable name", "Customized Dialog",
 								JOptionPane.PLAIN_MESSAGE, null, null, null);
 					}
 
-					if (!(consumable == null || consumable.isEmpty() || consumable.matches("^.*[^a-zA-Z0-9 ].*$"))) {
+					if (!(consumable == null || consumable.isEmpty()
+							|| consumable.matches("^.*[^a-zA-Z0-9 ].*$"))) {
 						if (QueryEngine.addTrainerConsumable(Integer.parseInt(trainerID), consumable)) {
 							JOptionPane.showMessageDialog(frame, "Success!");
 						} else {
@@ -480,18 +484,21 @@ public class GUI {
 							JOptionPane.PLAIN_MESSAGE, null, null, null);
 				}
 
-				if (!(trainerID == null || trainerID.isEmpty() || trainerID.matches("^.*[^0-9].*$"))) {
+				if (!(trainerID == null || trainerID.isEmpty()
+						|| trainerID.matches("^.*[^0-9].*$"))) {
 					String consumable = (String) JOptionPane.showInputDialog(
 							frame, "Enter the consumable name", "Customized Dialog",
 							JOptionPane.PLAIN_MESSAGE, null, null, null);
 
-					if (consumable == null || consumable.isEmpty() || consumable.matches("^.*[^a-zA-Z0-9 ].*$")) {
+					if (consumable == null || consumable.isEmpty()
+							|| consumable.matches("^.*[^a-zA-Z0-9 ].*$")) {
 						consumable = (String) JOptionPane.showInputDialog(
 								frame, "Please enter a valid consumable name", "Customized Dialog",
 								JOptionPane.PLAIN_MESSAGE, null, null, null);
 					}
 
-					if (!(consumable == null || consumable.isEmpty() || consumable.matches("^.*[^a-zA-Z0-9 ].*$"))) {
+					if (!(consumable == null || consumable.isEmpty()
+							|| consumable.matches("^.*[^a-zA-Z0-9 ].*$"))) {
 						if (QueryEngine.removeTrainerConsumable(Integer.parseInt(trainerID), consumable)) {
 							JOptionPane.showMessageDialog(frame, "Success!");
 						} else {
@@ -521,18 +528,21 @@ public class GUI {
 							JOptionPane.PLAIN_MESSAGE, null, null, null);
 				}
 
-				if (!(trainerID == null || trainerID.isEmpty() || trainerID.matches("^.*[^0-9].*$"))) {
+				if (!(trainerID == null || trainerID.isEmpty()
+						|| trainerID.matches("^.*[^0-9].*$"))) {
 					String pokeball = (String) JOptionPane.showInputDialog(
 							frame, "Enter the Pokeball name", "Customized Dialog",
 							JOptionPane.PLAIN_MESSAGE, null, null, null);
 
-					if (pokeball == null || pokeball.isEmpty() || pokeball.matches("^.*[^a-zA-Z0-9 ].*$")) {
+					if (pokeball == null || pokeball.isEmpty()
+							|| pokeball.matches("^.*[^a-zA-Z0-9 ].*$")) {
 						pokeball = (String) JOptionPane.showInputDialog(
 								frame, "Please enter a valid Pokeball name", "Customized Dialog",
 								JOptionPane.PLAIN_MESSAGE, null, null, null);
 					}
 
-					if (!(pokeball == null || pokeball.isEmpty() || pokeball.matches("^.*[^a-zA-Z0-9 ].*$"))) {
+					if (!(pokeball == null || pokeball.isEmpty()
+							|| pokeball.matches("^.*[^a-zA-Z0-9 ].*$"))) {
 						if (QueryEngine.removeTrainerPokeball(Integer.parseInt(trainerID), pokeball)) {
 							JOptionPane.showMessageDialog(frame, "Success!");
 						} else {
@@ -609,7 +619,8 @@ public class GUI {
 					JTable table = null;
 
 					try {
-						table = new JTable(buildTableModel(QueryEngine.searchTrainerID(Integer.parseInt(id))));
+						table = new JTable(buildTableModel(QueryEngine.
+								searchTrainerID(Integer.parseInt(id))));
 					} catch (SQLException exception) {
 						exception.printStackTrace();
 					}
@@ -671,7 +682,8 @@ public class GUI {
 					JTable table = null;
 
 					try {
-						table = new JTable(buildTableModel(QueryEngine.searchPokemonID(Integer.parseInt(id))));
+						table = new JTable(buildTableModel(QueryEngine.
+								searchPokemonID(Integer.parseInt(id))));
 					} catch (SQLException exception) {
 						exception.printStackTrace();
 					}
@@ -796,7 +808,8 @@ public class GUI {
 					JTable table = null;
 
 					try {
-						table = new JTable(buildTableModel(QueryEngine.getTrainerPokemon(Integer.parseInt(id))));
+						table = new JTable(buildTableModel(QueryEngine.
+								getTrainerPokemon(Integer.parseInt(id))));
 					} catch (SQLException exception) {
 						exception.printStackTrace();
 					}
@@ -827,7 +840,8 @@ public class GUI {
 					JTable table = null;
 
 					try {
-						table = new JTable(buildTableModel(QueryEngine.getTrainerItems(Integer.parseInt(id))));
+						table = new JTable(buildTableModel(QueryEngine.
+								getTrainerItems(Integer.parseInt(id))));
 					} catch (SQLException exception) {
 						exception.printStackTrace();
 					}
@@ -839,6 +853,101 @@ public class GUI {
 			}
 		});
 		showMenu.add(showMenuItem2);
+
+		JMenuItem showMenuItem3 = new JMenuItem("Trainer Unowned Pokemon");
+		showMenuItem3.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String id = (String) JOptionPane.showInputDialog(
+						frame, "Enter the trainer ID", "Customized Dialog",
+						JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+				if (id == null || id.isEmpty() || id.matches("^.*[^0-9].*$")) {
+					id = (String) JOptionPane.showInputDialog(
+							frame, "Please enter a valid trainer ID", "Customized Dialog",
+							JOptionPane.PLAIN_MESSAGE, null, null, null);
+				}
+
+				if (!(id == null || id.isEmpty() || id.matches("^.*[^0-9].*$"))) {
+					JTable table = null;
+
+					try {
+						table = new JTable(buildTableModel(QueryEngine.
+								findPokemonNotOwnedByTrainer(Integer.parseInt(id))));
+					} catch (SQLException exception) {
+						exception.printStackTrace();
+					}
+
+					JOptionPane.showMessageDialog(null, new JScrollPane(table));
+				} else {
+					JOptionPane.showMessageDialog(frame, "Cancelled");
+				}
+			}
+		});
+		showMenu.add(showMenuItem3);
+
+		// Create the AVG menu items
+		JMenuItem avgMenuItem1 = new JMenuItem("Pokemon Species Height");
+		avgMenuItem1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Object[] options = {"Species with the MINIMUM average height",
+				"Species with the MAXIMUM average height"};
+				String option = (String) JOptionPane.showInputDialog(
+						frame, "Select the option you want", "Customized Dialog",
+						JOptionPane.PLAIN_MESSAGE, null, options, null);
+
+				if (option != null) {
+					JTable table = null;
+
+					try {
+						if (option.contains("MINIMUM")) {
+							table = new JTable(buildTableModel(QueryEngine.
+									findSpeciesWithMinimumAverageHeight()));
+						} else {
+							table = new JTable(buildTableModel(QueryEngine.
+									findSpeciesWithMaximumAverageHeight()));
+						}
+					} catch (SQLException exception) {
+						exception.printStackTrace();
+					}
+
+					JOptionPane.showMessageDialog(null, new JScrollPane(table));
+				}
+			}
+		});
+		avgMenu.add(avgMenuItem1);
+
+		JMenuItem avgMenuItem2 = new JMenuItem("Pokemon Species Weight");
+		avgMenuItem2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Object[] options = {"Species with the MINIMUM average weight",
+				"Species with the MAXIMUM average weight"};
+				String option = (String) JOptionPane.showInputDialog(
+						frame, "Select the option you want", "Customized Dialog",
+						JOptionPane.PLAIN_MESSAGE, null, options, null);
+
+				if (option != null) {
+					JTable table = null;
+
+					try {
+						if (option.contains("MINIMUM")) {
+							table = new JTable(buildTableModel(QueryEngine.
+									findSpeciesWithMinimumAverageWeight()));
+						} else {
+							table = new JTable(buildTableModel(QueryEngine.
+									findSpeciesWithMaximumAverageWeight()));
+						}
+					} catch (SQLException exception) {
+						exception.printStackTrace();
+					}
+
+					JOptionPane.showMessageDialog(null, new JScrollPane(table));
+				}
+			}
+		});
+		avgMenu.add(avgMenuItem2);
 
 		// Create the MIN menu items
 		JMenuItem minMenuItem1 = new JMenuItem("Pokemon Height");
@@ -925,8 +1034,8 @@ public class GUI {
 					if (password == null) {
 						// Do nothing
 					} else if (password.isEmpty() || !password.equals(ADMIN_PASSWORD)) {
-						password = (String) JOptionPane.showInputDialog(frame, "Password incorrect, "
-								+ "please try again", "Customized Dialog",
+						password = (String) JOptionPane.showInputDialog(frame,
+								"Password incorrect, please try again", "Customized Dialog",
 								JOptionPane.PLAIN_MESSAGE, null, null, null);
 					}
 
@@ -942,6 +1051,20 @@ public class GUI {
 			}
 		});
 		adminMenu.add(adminMenuItem1);
+
+		JMenuItem adminMenuItem2 = new JMenuItem("Logout");
+		adminMenuItem2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (adminAccess) {
+					adminAccess = false;
+					JOptionPane.showMessageDialog(frame, "Logout success");
+				} else {
+					JOptionPane.showMessageDialog(frame, "You are not logged in as an admin");
+				}
+			}
+		});
+		adminMenu.add(adminMenuItem2);
 
 		// Create the background
 		JLabel background = new JLabel();
