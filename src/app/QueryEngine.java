@@ -10,6 +10,7 @@ import java.util.Random;
 
 public class QueryEngine {
 	private static Connection c;
+	private static Statement s;
 
 	/**
 	 * Adds a new trainer to the database.
@@ -18,7 +19,7 @@ public class QueryEngine {
 	 */
 	public static void addTrainer(String name, String gender) {
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			ResultSet r = s.executeQuery("SELECT * FROM Trainer");
 			ArrayList<Integer> ids = new ArrayList<Integer>();
 
@@ -41,6 +42,9 @@ public class QueryEngine {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
+		// For debugging purposes
+		System.out.println("***addTrainer was executed");
 	}
 
 	/**
@@ -53,7 +57,7 @@ public class QueryEngine {
 		boolean success = false;
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			ResultSet r = s.executeQuery("SELECT * FROM Trainer");
 			ArrayList<Integer> ids = new ArrayList<Integer>();
 
@@ -87,7 +91,7 @@ public class QueryEngine {
 		boolean success = false;
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			ResultSet r = s.executeQuery("SELECT * FROM Trainer");
 			ArrayList<Integer> trainerIDs = new ArrayList<Integer>();
 
@@ -134,7 +138,7 @@ public class QueryEngine {
 		boolean success = false;
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			ResultSet r = s.executeQuery("SELECT * FROM Trainer");
 			ArrayList<Integer> trainerIDs = new ArrayList<Integer>();
 
@@ -182,7 +186,7 @@ public class QueryEngine {
 		move = addWhitespace(move, 20);
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			ResultSet r = s.executeQuery("SELECT * FROM Pokemon");
 			ArrayList<Integer> pokemonIDs = new ArrayList<Integer>();
 
@@ -230,7 +234,7 @@ public class QueryEngine {
 		move = addWhitespace(move, 20);
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			ResultSet r = s.executeQuery("SELECT * FROM Pokemon");
 			ArrayList<Integer> pokemonIDs = new ArrayList<Integer>();
 
@@ -278,7 +282,7 @@ public class QueryEngine {
 		tmhm = addWhitespace(tmhm, 5);
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			ResultSet r = s.executeQuery("SELECT * FROM Trainer");
 			ArrayList<Integer> trainerIDs = new ArrayList<Integer>();
 
@@ -326,7 +330,7 @@ public class QueryEngine {
 		tmhm = addWhitespace(tmhm, 5);
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			ResultSet r = s.executeQuery("SELECT * FROM Trainer");
 			ArrayList<Integer> trainerIDs = new ArrayList<Integer>();
 
@@ -374,7 +378,7 @@ public class QueryEngine {
 		consumable = addWhitespace(consumable, 20);
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			ResultSet r = s.executeQuery("SELECT * FROM Trainer");
 			ArrayList<String> trainerIDs = new ArrayList<String>();
 
@@ -422,7 +426,7 @@ public class QueryEngine {
 		consumable = addWhitespace(consumable, 20);
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			ResultSet r = s.executeQuery("SELECT * FROM Trainer");
 			ArrayList<Integer> trainerIDs = new ArrayList<Integer>();
 
@@ -470,7 +474,7 @@ public class QueryEngine {
 		pokeball = addWhitespace(pokeball, 20);
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			ResultSet r = s.executeQuery("SELECT * FROM Trainer");
 			ArrayList<String> trainerIDs = new ArrayList<String>();
 
@@ -518,7 +522,7 @@ public class QueryEngine {
 		pokeball = addWhitespace(pokeball, 20);
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			ResultSet r = s.executeQuery("SELECT * FROM Trainer");
 			ArrayList<Integer> trainerIDs = new ArrayList<Integer>();
 
@@ -564,9 +568,8 @@ public class QueryEngine {
 		ResultSet r = null;
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			r = s.executeQuery("SELECT * FROM Trainer WHERE ID = " + id);
-			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -583,9 +586,8 @@ public class QueryEngine {
 		ResultSet r = null;
 
 		try {
-			Statement s = c.createStatement();	
+			s = c.createStatement();	
 			r = s.executeQuery("SELECT * FROM Trainer WHERE Name LIKE '%" + name + "%'");
-			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -602,9 +604,8 @@ public class QueryEngine {
 		ResultSet r = null;
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			r = s.executeQuery("SELECT * FROM Pokemon WHERE ID = " + id);
-			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -621,9 +622,8 @@ public class QueryEngine {
 		ResultSet r = null;
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			r = s.executeQuery("SELECT * FROM Pokemon WHERE Name LIKE '%" + name + "%'");
-			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -640,9 +640,8 @@ public class QueryEngine {
 		ResultSet r = null;
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			r = s.executeQuery("SELECT * FROM Move WHERE Name LIKE '%" + name + "%'");
-			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -659,11 +658,10 @@ public class QueryEngine {
 		ResultSet r = null;
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			r = s.executeQuery("SELECT Name FROM TMHM WHERE Name LIKE '%" + name + "%'"
 					+ " UNION SELECT Name FROM Consumable WHERE Name LIKE '%" + name + "%'"
 					+ " UNION SELECT Name FROM Pokeball WHERE Name LIKE '%" + name + "%'");
-			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -680,7 +678,7 @@ public class QueryEngine {
 		ResultSet r = null;
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			r = s.executeQuery("SELECT * FROM Trainer");
 			ArrayList<Integer> trainerIDs = new ArrayList<Integer>();
 
@@ -694,8 +692,6 @@ public class QueryEngine {
 			} else {
 				System.out.println("ERROR: Trainer does not exist");
 			}
-
-			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -712,7 +708,7 @@ public class QueryEngine {
 		ResultSet r = null;
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			r = s.executeQuery("SELECT * FROM Trainer");
 			ArrayList<Integer> trainerIDs = new ArrayList<Integer>();
 
@@ -728,8 +724,6 @@ public class QueryEngine {
 			} else {
 				System.out.println("ERROR: Trainer does not exist");
 			}
-
-			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -741,10 +735,13 @@ public class QueryEngine {
 	 * Update the name of the trainer with the specified ID.
 	 * @param id The ID of the trainer.
 	 * @param name The new name of the trainer.
+	 * @return true if success, false otherwise
 	 */
-	public static void updateTrainerName(int id, String name) {
+	public static boolean updateTrainerName(int id, String name) {
+		boolean success = false;
+
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			ResultSet r = s.executeQuery("SELECT * FROM Trainer");
 			ArrayList<Integer> ids = new ArrayList<Integer>();
 
@@ -755,6 +752,7 @@ public class QueryEngine {
 			// Check if trainer exists
 			if (ids.contains(id)) {
 				s.executeQuery("UPDATE Trainer SET Name = '" + name + "' WHERE ID = " + id);
+				success = true;
 			} else {
 				System.out.println("ERROR: Trainer does not exist");
 			}
@@ -763,20 +761,21 @@ public class QueryEngine {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
+		return success;
 	}
 
 	/**
-	 * Find the heaviest Pokemon.
+	 * Find the shortest Pokemon.
 	 * @return The row containing the Pokemon's information.
 	 */
-	public static ResultSet findHeaviestPokemon() {
+	public static ResultSet findShortestPokemon() {
 		ResultSet r = null;
 
 		try {
-			Statement s = c.createStatement();
-			r = s.executeQuery("SELECT * FROM Pokemon P WHERE P.weight"
-					+ " = (SELECT MAX(P.weight) FROM Pokemon P)");
-			s.close();
+			s = c.createStatement();
+			r = s.executeQuery("SELECT * FROM Pokemon P WHERE P.height"
+					+ " = (SELECT MIN(P.height) FROM Pokemon P)");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -792,10 +791,45 @@ public class QueryEngine {
 		ResultSet r = null;
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			r = s.executeQuery("SELECT * FROM Pokemon P WHERE P.height"
 					+ " = (SELECT MAX(P.height) FROM Pokemon P)");
-			s.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return r;
+	}
+
+	/**
+	 * Find the lightest Pokemon.
+	 * @return The row containing the Pokemon's information.
+	 */
+	public static ResultSet findLightestPokemon() {
+		ResultSet r = null;
+
+		try {
+			s = c.createStatement();
+			r = s.executeQuery("SELECT * FROM Pokemon P WHERE P.weight"
+					+ " = (SELECT MIN(P.weight) FROM Pokemon P)");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return r;
+	}
+
+	/**
+	 * Find the heaviest Pokemon.
+	 * @return The row containing the Pokemon's information.
+	 */
+	public static ResultSet findHeaviestPokemon() {
+		ResultSet r = null;
+
+		try {
+			s = c.createStatement();
+			r = s.executeQuery("SELECT * FROM Pokemon P WHERE P.weight"
+					+ " = (SELECT MAX(P.weight) FROM Pokemon P)");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -812,7 +846,7 @@ public class QueryEngine {
 		ResultSet r = null;
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			r = s.executeQuery("SELECT * FROM Pokemon WHERE Height < " + height);
 			s.close();
 		} catch (SQLException e) {
@@ -831,7 +865,7 @@ public class QueryEngine {
 		ResultSet r = null;
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			r = s.executeQuery("SELECT * FROM Pokemon WHERE Height > " + height);
 			s.close();
 		} catch (SQLException e) {
@@ -850,7 +884,7 @@ public class QueryEngine {
 		ResultSet r = null;
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			r = s.executeQuery("SELECT * FROM Pokemon WHERE Weight < " + weight);
 			s.close();
 		} catch (SQLException e) {
@@ -869,7 +903,7 @@ public class QueryEngine {
 		ResultSet r = null;
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			r = s.executeQuery("SELECT * FROM Pokemon WHERE Weight > " + weight);
 			s.close();
 		} catch (SQLException e) {
@@ -888,7 +922,7 @@ public class QueryEngine {
 		ResultSet r = null;
 
 		try {
-			Statement s = c.createStatement();
+			s = c.createStatement();
 			r = s.executeQuery("SELECT ID FROM Pokemon MINUS SELECT PokemonID"
 					+ " FROM Catches WHERE TrainerID = " + id);
 
@@ -939,6 +973,17 @@ public class QueryEngine {
 			c = DriverManager.getConnection(
 					"jdbc:oracle:thin:@dbhost.ugrad.cs.ubc.ca:1522:ug",
 					"ora_d6x8", "a65826083");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Closes the statement.
+	 */
+	public static void closeStatement() {
+		try {
+			s.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

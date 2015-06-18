@@ -6,6 +6,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -13,10 +17,16 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 import app.QueryEngine;
 
 public class GUI {
+	/**
+	 * Creates the GUI.
+	 */
 	private static void createGUI() {
 		// Create the main window
 		JFrame frame = new JFrame("PokemonDB");
@@ -38,6 +48,16 @@ public class GUI {
 		menuBar.add(addMenu);
 		JMenu removeMenu = new JMenu("Remove");
 		menuBar.add(removeMenu);
+		JMenu searchMenu = new JMenu("Search");
+		menuBar.add(searchMenu);
+		JMenu showMenu = new JMenu("Show");
+		menuBar.add(showMenu);
+		JMenu updateMenu = new JMenu("Update");
+		menuBar.add(updateMenu);
+		JMenu minMenu = new JMenu("MIN");
+		menuBar.add(minMenu);
+		JMenu maxMenu = new JMenu("MAX");
+		menuBar.add(maxMenu);
 
 		// Create the Add menu items
 		JMenuItem addMenuItem1 = new JMenuItem("Trainer");
@@ -60,8 +80,13 @@ public class GUI {
 							frame, "Select the gender of the trainer", "Customized Dialog",
 							JOptionPane.PLAIN_MESSAGE, null, genders, null);
 
-					QueryEngine.addTrainer(name, gender);
-					JOptionPane.showMessageDialog(frame, "Success!");
+					if (gender != null) {
+						QueryEngine.addTrainer(name, gender);
+						JOptionPane.showMessageDialog(frame, "Success!");
+					} else {
+						JOptionPane.showMessageDialog(frame, "Cancelled");
+					}
+
 				} else {
 					JOptionPane.showMessageDialog(frame, "Cancelled");
 				}
@@ -280,18 +305,18 @@ public class GUI {
 		removeMenuItem1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String trainerID = (String) JOptionPane.showInputDialog(
+				String id = (String) JOptionPane.showInputDialog(
 						frame, "Enter the trainer ID", "Customized Dialog",
 						JOptionPane.PLAIN_MESSAGE, null, null, null);
 
-				if (trainerID == null || trainerID.isEmpty() || trainerID.matches("^.*[^0-9].*$")) {
-					trainerID = (String) JOptionPane.showInputDialog(
+				if (id == null || id.isEmpty() || id.matches("^.*[^0-9].*$")) {
+					id = (String) JOptionPane.showInputDialog(
 							frame, "Please enter a valid trainer ID", "Customized Dialog",
 							JOptionPane.PLAIN_MESSAGE, null, null, null);
 				}
 
-				if (!(trainerID == null || trainerID.isEmpty() || trainerID.matches("^.*[^0-9].*$"))) {
-					if (QueryEngine.removeTrainer(Integer.parseInt(trainerID))) {
+				if (!(id == null || id.isEmpty() || id.matches("^.*[^0-9].*$"))) {
+					if (QueryEngine.removeTrainer(Integer.parseInt(id))) {
 						JOptionPane.showMessageDialog(frame, "Success!");
 					} else {
 						JOptionPane.showMessageDialog(frame, "Failure!");
@@ -509,6 +534,368 @@ public class GUI {
 		});
 		removeMenu.add(removeMenuItem6);
 
+		// Create the Update menu items
+		JMenuItem updateMenuItem1 = new JMenuItem("Trainer Name");
+		updateMenuItem1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String id = (String) JOptionPane.showInputDialog(
+						frame, "Enter the trainer ID", "Customized Dialog",
+						JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+				if (id == null || id.isEmpty() || id.matches("^.*[^0-9].*$")) {
+					id = (String) JOptionPane.showInputDialog(
+							frame, "Please enter a valid trainer ID", "Customized Dialog",
+							JOptionPane.PLAIN_MESSAGE, null, null, null);
+				}
+
+				if (!(id == null || id.isEmpty() || id.matches("^.*[^0-9].*$"))) {
+					String name = (String) JOptionPane.showInputDialog(
+							frame, "Enter the new trainer name", "Customized Dialog",
+							JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+					if (name == null || name.isEmpty() || name.matches("^.*[^a-zA-Z0-9 ].*$")) {
+						name = (String) JOptionPane.showInputDialog(
+								frame, "Please enter a valid name", "Customized Dialog",
+								JOptionPane.PLAIN_MESSAGE, null, null, null);
+					}
+
+					if (!(name == null || name.isEmpty() || name.matches("^.*[^a-zA-Z0-9 ].*$"))) {
+						if (QueryEngine.updateTrainerName(Integer.parseInt(id), name)) {
+							JOptionPane.showMessageDialog(frame, "Success!");
+						} else {
+							JOptionPane.showMessageDialog(frame, "Failure!");
+						}
+					} else {
+						JOptionPane.showMessageDialog(frame, "Cancelled");
+					}
+				} else {
+					JOptionPane.showMessageDialog(frame, "Cancelled");
+				}
+			}
+		});
+		updateMenu.add(updateMenuItem1);
+
+		// Create the Search menu items
+		JMenuItem searchMenuItem1 = new JMenuItem("Trainer ID");
+		searchMenuItem1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String id = (String) JOptionPane.showInputDialog(
+						frame, "Enter the trainer ID", "Customized Dialog",
+						JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+				if (id == null || id.isEmpty() || id.matches("^.*[^0-9].*$")) {
+					id = (String) JOptionPane.showInputDialog(
+							frame, "Please enter a valid trainer ID", "Customized Dialog",
+							JOptionPane.PLAIN_MESSAGE, null, null, null);
+				}
+
+				if (!(id == null || id.isEmpty() || id.matches("^.*[^0-9].*$"))) {
+					JTable table = null;
+
+					try {
+						table = new JTable(buildTableModel(QueryEngine.searchTrainerID(Integer.parseInt(id))));
+					} catch (SQLException exception) {
+						exception.printStackTrace();
+					}
+
+					JOptionPane.showMessageDialog(null, new JScrollPane(table));
+				} else {
+					JOptionPane.showMessageDialog(frame, "Cancelled");
+				}
+			}
+		});
+		searchMenu.add(searchMenuItem1);
+
+		JMenuItem searchMenuItem2 = new JMenuItem("Trainer Name");
+		searchMenuItem2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String name = (String) JOptionPane.showInputDialog(
+						frame, "Enter the trainer name", "Customized Dialog",
+						JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+				if (name == null || name.isEmpty() || name.matches("^.*[^a-zA-Z0-9 ].*$")) {
+					name = (String) JOptionPane.showInputDialog(
+							frame, "Please enter a valid trainer name", "Customized Dialog",
+							JOptionPane.PLAIN_MESSAGE, null, null, null);
+				}
+
+				if (!(name == null || name.isEmpty() || name.matches("^.*[^a-zA-Z0-9 ].*$"))) {
+					JTable table = null;
+
+					try {
+						table = new JTable(buildTableModel(QueryEngine.searchTrainer(name)));
+					} catch (SQLException exception) {
+						exception.printStackTrace();
+					}
+
+					JOptionPane.showMessageDialog(null, new JScrollPane(table));
+				} else {
+					JOptionPane.showMessageDialog(frame, "Cancelled");
+				}
+			}
+		});
+		searchMenu.add(searchMenuItem2);
+
+		JMenuItem searchMenuItem3 = new JMenuItem("Pokemon ID");
+		searchMenuItem3.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String id = (String) JOptionPane.showInputDialog(
+						frame, "Enter the Pokemon ID", "Customized Dialog",
+						JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+				if (id == null || id.isEmpty() || id.matches("^.*[^0-9].*$")) {
+					id = (String) JOptionPane.showInputDialog(
+							frame, "Please enter a valid Pokemon ID", "Customized Dialog",
+							JOptionPane.PLAIN_MESSAGE, null, null, null);
+				}
+
+				if (!(id == null || id.isEmpty() || id.matches("^.*[^0-9].*$"))) {
+					JTable table = null;
+
+					try {
+						table = new JTable(buildTableModel(QueryEngine.searchPokemonID(Integer.parseInt(id))));
+					} catch (SQLException exception) {
+						exception.printStackTrace();
+					}
+
+					JOptionPane.showMessageDialog(null, new JScrollPane(table));
+				} else {
+					JOptionPane.showMessageDialog(frame, "Cancelled");
+				}
+			}
+		});
+		searchMenu.add(searchMenuItem3);
+
+		JMenuItem searchMenuItem4 = new JMenuItem("Pokemon Name");
+		searchMenuItem4.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String name = (String) JOptionPane.showInputDialog(
+						frame, "Enter the Pokemon name", "Customized Dialog",
+						JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+				if (name == null || name.isEmpty() || name.matches("^.*[^a-zA-Z0-9 ].*$")) {
+					name = (String) JOptionPane.showInputDialog(
+							frame, "Please enter a valid Pokemon name", "Customized Dialog",
+							JOptionPane.PLAIN_MESSAGE, null, null, null);
+				}
+
+				if (!(name == null || name.isEmpty() || name.matches("^.*[^a-zA-Z0-9 ].*$"))) {
+					JTable table = null;
+
+					try {
+						table = new JTable(buildTableModel(QueryEngine.searchPokemon(name)));
+					} catch (SQLException exception) {
+						exception.printStackTrace();
+					}
+
+					JOptionPane.showMessageDialog(null, new JScrollPane(table));
+				} else {
+					JOptionPane.showMessageDialog(frame, "Cancelled");
+				}
+			}
+		});
+		searchMenu.add(searchMenuItem4);
+
+		JMenuItem searchMenuItem5 = new JMenuItem("Move");
+		searchMenuItem5.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String name = (String) JOptionPane.showInputDialog(
+						frame, "Enter the move name", "Customized Dialog",
+						JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+				if (name == null || name.isEmpty() || name.matches("^.*[^a-zA-Z0-9 ].*$")) {
+					name = (String) JOptionPane.showInputDialog(
+							frame, "Please enter a valid move name", "Customized Dialog",
+							JOptionPane.PLAIN_MESSAGE, null, null, null);
+				}
+
+				if (!(name == null || name.isEmpty() || name.matches("^.*[^a-zA-Z0-9 ].*$"))) {
+					JTable table = null;
+
+					try {
+						table = new JTable(buildTableModel(QueryEngine.searchMove(name)));
+					} catch (SQLException exception) {
+						exception.printStackTrace();
+					}
+
+					JOptionPane.showMessageDialog(null, new JScrollPane(table));
+				} else {
+					JOptionPane.showMessageDialog(frame, "Cancelled");
+				}
+			}
+		});
+		searchMenu.add(searchMenuItem5);
+
+		JMenuItem searchMenuItem6 = new JMenuItem("Item");
+		searchMenuItem6.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String name = (String) JOptionPane.showInputDialog(
+						frame, "Enter the item name", "Customized Dialog",
+						JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+				if (name == null || name.isEmpty() || name.matches("^.*[^a-zA-Z0-9 ].*$")) {
+					name = (String) JOptionPane.showInputDialog(
+							frame, "Please enter a valid item name", "Customized Dialog",
+							JOptionPane.PLAIN_MESSAGE, null, null, null);
+				}
+
+				if (!(name == null || name.isEmpty() || name.matches("^.*[^a-zA-Z0-9 ].*$"))) {
+					JTable table = null;
+
+					try {
+						table = new JTable(buildTableModel(QueryEngine.searchItem(name)));
+					} catch (SQLException exception) {
+						exception.printStackTrace();
+					}
+
+					JOptionPane.showMessageDialog(null, new JScrollPane(table));
+				} else {
+					JOptionPane.showMessageDialog(frame, "Cancelled");
+				}
+			}
+		});
+		searchMenu.add(searchMenuItem6);
+
+		// Create the Show menu items
+		JMenuItem showMenuItem1 = new JMenuItem("Trainer Pokemon");
+		showMenuItem1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String id = (String) JOptionPane.showInputDialog(
+						frame, "Enter the trainer ID", "Customized Dialog",
+						JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+				if (id == null || id.isEmpty() || id.matches("^.*[^0-9].*$")) {
+					id = (String) JOptionPane.showInputDialog(
+							frame, "Please enter a valid trainer ID", "Customized Dialog",
+							JOptionPane.PLAIN_MESSAGE, null, null, null);
+				}
+
+				if (!(id == null || id.isEmpty() || id.matches("^.*[^0-9].*$"))) {
+					JTable table = null;
+
+					try {
+						table = new JTable(buildTableModel(QueryEngine.getTrainerPokemon(Integer.parseInt(id))));
+					} catch (SQLException exception) {
+						exception.printStackTrace();
+					}
+
+					JOptionPane.showMessageDialog(null, new JScrollPane(table));
+				} else {
+					JOptionPane.showMessageDialog(frame, "Cancelled");
+				}
+			}
+		});
+		showMenu.add(showMenuItem1);
+
+		JMenuItem showMenuItem2 = new JMenuItem("Trainer Items");
+		showMenuItem2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String id = (String) JOptionPane.showInputDialog(
+						frame, "Enter the trainer ID", "Customized Dialog",
+						JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+				if (id == null || id.isEmpty() || id.matches("^.*[^0-9].*$")) {
+					id = (String) JOptionPane.showInputDialog(
+							frame, "Please enter a valid trainer ID", "Customized Dialog",
+							JOptionPane.PLAIN_MESSAGE, null, null, null);
+				}
+
+				if (!(id == null || id.isEmpty() || id.matches("^.*[^0-9].*$"))) {
+					JTable table = null;
+
+					try {
+						table = new JTable(buildTableModel(QueryEngine.getTrainerItems(Integer.parseInt(id))));
+					} catch (SQLException exception) {
+						exception.printStackTrace();
+					}
+
+					JOptionPane.showMessageDialog(null, new JScrollPane(table));
+				} else {
+					JOptionPane.showMessageDialog(frame, "Cancelled");
+				}
+			}
+		});
+		showMenu.add(showMenuItem2);
+
+		// Create the MIN menu items
+		JMenuItem minMenuItem1 = new JMenuItem("Pokemon Height");
+		minMenuItem1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JTable table = null;
+
+				try {
+					table = new JTable(buildTableModel(QueryEngine.findShortestPokemon()));
+				} catch (SQLException exception) {
+					exception.printStackTrace();
+				}
+
+				JOptionPane.showMessageDialog(null, new JScrollPane(table));
+			}
+		});
+		minMenu.add(minMenuItem1);
+
+		JMenuItem minMenuItem2 = new JMenuItem("Pokemon Weight");
+		minMenuItem2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JTable table = null;
+
+				try {
+					table = new JTable(buildTableModel(QueryEngine.findLightestPokemon()));
+				} catch (SQLException exception) {
+					exception.printStackTrace();
+				}
+
+				JOptionPane.showMessageDialog(null, new JScrollPane(table));
+			}
+		});
+		minMenu.add(minMenuItem2);
+
+		// Create the MAX menu items
+		JMenuItem maxMenuItem1 = new JMenuItem("Pokemon Height");
+		maxMenuItem1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JTable table = null;
+
+				try {
+					table = new JTable(buildTableModel(QueryEngine.findTallestPokemon()));
+				} catch (SQLException exception) {
+					exception.printStackTrace();
+				}
+
+				JOptionPane.showMessageDialog(null, new JScrollPane(table));
+			}
+		});
+		maxMenu.add(maxMenuItem1);
+
+		JMenuItem maxMenuItem2 = new JMenuItem("Pokemon Weight");
+		maxMenuItem2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JTable table = null;
+
+				try {
+					table = new JTable(buildTableModel(QueryEngine.findHeaviestPokemon()));
+				} catch (SQLException exception) {
+					exception.printStackTrace();
+				}
+
+				JOptionPane.showMessageDialog(null, new JScrollPane(table));
+			}
+		});
+		maxMenu.add(maxMenuItem2);
+
 		// Create the background
 		JLabel background = new JLabel();
 		background.setOpaque(true);
@@ -522,6 +909,44 @@ public class GUI {
 		// Display the window
 		frame.pack();
 		frame.setVisible(true);
+	}
+
+	/**
+	 * Produces a table given a ResultSet object.
+	 * This code is based on the code found at:
+	 * http://stackoverflow.com/questions/11734561/how-to-view-database-resultset-in-java-swing
+	 * @param r The row(s) containing the query results.
+	 * @return A model of the table.
+	 * @throws SQLException
+	 */
+	public static DefaultTableModel buildTableModel(ResultSet r)
+			throws SQLException {
+		ResultSetMetaData rsMetaData = r.getMetaData();
+
+		// Get column information
+		Vector<String> names = new Vector<String>();
+		int count = rsMetaData.getColumnCount();
+
+		for (int column = 1; column <= count; column++) {
+			names.add(rsMetaData.getColumnName(column));
+		}
+
+		// Get data
+		Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+
+		while (r.next()) {
+			Vector<Object> vector = new Vector<Object>();
+
+			for (int i = 1; i <= count; i++) {
+				vector.add(r.getObject(i));
+			}
+
+			data.add(vector);
+		}
+
+		QueryEngine.closeStatement();
+
+		return new DefaultTableModel(data, names);
 	}
 
 	public static void main(String[] args) {
