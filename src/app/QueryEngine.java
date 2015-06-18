@@ -47,8 +47,11 @@ public class QueryEngine {
 	 * Removes a trainer and all information about the Pokemon and items
 	 * owned by that trainer.
 	 * @param id The ID of the trainer.
+	 * @return true if success, false otherwise
 	 */
-	public static void removeTrainer(int id) {
+	public static boolean removeTrainer(int id) {
+		boolean success = false;
+
 		try {
 			Statement s = c.createStatement();
 			ResultSet r = s.executeQuery("SELECT * FROM Trainer");
@@ -61,6 +64,7 @@ public class QueryEngine {
 			// Check if trainer exists
 			if (ids.contains(id)) {
 				s.executeUpdate("DELETE FROM Trainer WHERE ID = " + id);
+				success = true;
 			} else {
 				System.out.println("ERROR: Trainer does not exist");
 			}
@@ -69,14 +73,19 @@ public class QueryEngine {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
+		return success;
 	}
 
 	/**
 	 * Adds a Pokemon to the list of Pokemon owned by the given trainer.
 	 * @param trainerID The ID of the trainer.
 	 * @param pokemonID The ID of the Pokemon.
+	 * @return true if success, false otherwise
 	 */
-	public static void addTrainerPokemon(int trainerID, int pokemonID) {
+	public static boolean addTrainerPokemon(int trainerID, int pokemonID) {
+		boolean success = false;
+
 		try {
 			Statement s = c.createStatement();
 			ResultSet r = s.executeQuery("SELECT * FROM Trainer");
@@ -99,6 +108,7 @@ public class QueryEngine {
 				if (pokemonIDs.contains(pokemonID)) {
 					s.executeUpdate("INSERT INTO Catches VALUES (" + trainerID + ", "
 							+ pokemonID + ")");
+					success = true;
 				} else {
 					System.out.println("ERROR: Pokemon does not exist");
 				}
@@ -110,14 +120,19 @@ public class QueryEngine {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
+		return success;
 	}
 
 	/**
 	 * Removes a Pokemon from the list of Pokemon owned by the given trainer.
 	 * @param trainerID The ID of the trainer.
 	 * @param pokemonID The ID of the Pokemon.
+	 * @return true if success, false otherwise
 	 */
-	public static void removeTrainerPokemon(int trainerID, int pokemonID) {
+	public static boolean removeTrainerPokemon(int trainerID, int pokemonID) {
+		boolean success = false;
+
 		try {
 			Statement s = c.createStatement();
 			ResultSet r = s.executeQuery("SELECT * FROM Trainer");
@@ -140,6 +155,7 @@ public class QueryEngine {
 				if (pokemonIDs.contains(pokemonID)) {
 					s.executeUpdate("DELETE FROM Catches WHERE TrainerID = " + trainerID
 							+ " AND PokemonID = " + pokemonID);
+					success = true;
 				} else {
 					System.out.println("ERROR: Pokemon does not exist");
 				}
@@ -151,14 +167,18 @@ public class QueryEngine {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
+		return success;
 	}
 
 	/**
 	 * Adds a move to the list of moves known by the given Pokemon.
 	 * @param pokemonID The ID of the Pokemon.
 	 * @param move The name of the move.
+	 * @return true if success, false otherwise
 	 */
-	public static void addPokemonMove(int pokemonID, String move) {
+	public static boolean addPokemonMove(int pokemonID, String move) {
+		boolean success = false;
 		move = addWhitespace(move, 20);
 
 		try {
@@ -183,6 +203,7 @@ public class QueryEngine {
 				if (moves.contains(move)) {
 					s.executeUpdate("INSERT INTO KnowsMove VALUES (" + pokemonID + ", '"
 							+ move + "')");
+					success = true;
 				} else {
 					System.out.println("ERROR: Move does not exist");
 				}
@@ -194,14 +215,18 @@ public class QueryEngine {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
+		return success;
 	}
 
 	/**
 	 * Removes a move from the list of moves known by the given Pokemon.
 	 * @param pokemonID The ID of the Pokemon.
 	 * @param move The name of the move.
+	 * @return true if success, false otherwise
 	 */
-	public static void removePokemonMove(int pokemonID, String move) {
+	public static boolean removePokemonMove(int pokemonID, String move) {
+		boolean success = false;
 		move = addWhitespace(move, 20);
 
 		try {
@@ -226,6 +251,7 @@ public class QueryEngine {
 				if (moves.contains(move)) {
 					s.executeUpdate("DELETE FROM KnowsMove WHERE PokemonID = " + pokemonID
 							+ " AND MoveName = '" + move + "'");
+					success = true;
 				} else {
 					System.out.println("ERROR: Move does not exist");
 				}
@@ -237,14 +263,18 @@ public class QueryEngine {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
+		return success;
 	}
 
 	/**
 	 * Adds a TMHM to the list of TMHMs owned by the given trainer.
 	 * @param trainerID The ID of the trainer.
 	 * @param tmhm The name of the TMHM.
+	 * @return true if success, false otherwise
 	 */
-	public static void addTrainerTMHM(int trainerID, String tmhm) {
+	public static boolean addTrainerTMHM(int trainerID, String tmhm) {
+		boolean success = false;
 		tmhm = addWhitespace(tmhm, 5);
 
 		try {
@@ -269,6 +299,7 @@ public class QueryEngine {
 				if (tmhms.contains(tmhm)) {
 					s.executeUpdate("INSERT INTO HasTMHM VALUES (" + trainerID + ", '"
 							+ tmhm + "')");
+					success = true;
 				} else {
 					System.out.println("ERROR: TMHM does not exist");
 				}
@@ -280,14 +311,18 @@ public class QueryEngine {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
+		return success;
 	}
 
 	/**
 	 * Removes a TMHM from the list of TMHMs owned by the given trainer.
 	 * @param trainerID The ID of the trainer.
 	 * @param tmhm The name of the TMHM.
+	 * @return true if success, false otherwise
 	 */
-	public static void removeTrainerTMHM(int trainerID, String tmhm) {
+	public static boolean removeTrainerTMHM(int trainerID, String tmhm) {
+		boolean success = false;
 		tmhm = addWhitespace(tmhm, 5);
 
 		try {
@@ -312,6 +347,7 @@ public class QueryEngine {
 				if (tmhms.contains(tmhm)) {
 					s.executeUpdate("DELETE FROM HasTMHM WHERE TrainerID = " + trainerID
 							+ " AND TMHMName = '" + tmhm + "'");
+					success = true;
 				} else {
 					System.out.println("ERROR: TMHM does not exist");
 				}
@@ -323,14 +359,18 @@ public class QueryEngine {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
+		return success;
 	}
 
 	/**
 	 * Adds a consumable to the list of consumables owned by the given trainer.
 	 * @param trainerID The ID of the trainer.
 	 * @param consumable The name of the consumable.
+	 * @return true if success, false otherwise
 	 */
-	public static void addTrainerConsumable(int trainerID, String consumable) {
+	public static boolean addTrainerConsumable(int trainerID, String consumable) {
+		boolean success = false;
 		consumable = addWhitespace(consumable, 20);
 
 		try {
@@ -355,6 +395,7 @@ public class QueryEngine {
 				if (consumables.contains(consumable)) {
 					s.executeUpdate("INSERT INTO HasConsumable VALUES (" + trainerID + ", '"
 							+ consumable + "')");
+					success = true;
 				} else {
 					System.out.println("ERROR: Consumable does not exist");
 				}
@@ -366,14 +407,18 @@ public class QueryEngine {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
+		return success;
 	}
 
 	/**
 	 * Removes a consumable from the list of consumables owned by the given trainer.
 	 * @param trainerID The ID of the trainer.
 	 * @param consumable The name of the consumable.
+	 * @return true if success, false otherwise
 	 */
-	public static void removeTrainerConsumable(int trainerID, String consumable) {
+	public static boolean removeTrainerConsumable(int trainerID, String consumable) {
+		boolean success = false;
 		consumable = addWhitespace(consumable, 20);
 
 		try {
@@ -398,6 +443,7 @@ public class QueryEngine {
 				if (consumables.contains(consumable)) {
 					s.executeUpdate("DELETE FROM HasConsumable WHERE TrainerID = " + trainerID
 							+ " AND ConsumableName = '" + consumable + "'");
+					success = true;
 				} else {
 					System.out.println("ERROR: Consumable does not exist");
 				}
@@ -409,14 +455,18 @@ public class QueryEngine {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
+		return success;
 	}
 
 	/**
 	 * Adds a Pokeball to the list of Pokeballs owned by the given trainer.
 	 * @param trainerID The ID of the trainer.
 	 * @param pokeball The name of the Pokeball.
+	 * @return true if success, false otherwise
 	 */
-	public static void addTrainerPokeball(int trainerID, String pokeball) {
+	public static boolean addTrainerPokeball(int trainerID, String pokeball) {
+		boolean success = false;
 		pokeball = addWhitespace(pokeball, 20);
 
 		try {
@@ -441,6 +491,7 @@ public class QueryEngine {
 				if (pokeballs.contains(pokeball)) {
 					s.executeUpdate("INSERT INTO HasPokeball VALUES (" + trainerID + ", '"
 							+ pokeball + "')");
+					success = true;
 				} else {
 					System.out.println("ERROR: Pokeball does not exist");
 				}
@@ -452,14 +503,18 @@ public class QueryEngine {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
+		return success;
 	}
 
 	/**
 	 * Removes a Pokeball from the list of Pokeballs owned by the given trainer.
 	 * @param trainerID The ID of the trainer.
 	 * @param pokeball The name of the Pokeball.
+	 * @return true if success, false otherwise
 	 */
-	public static void removeTrainerPokeball(int trainerID, String pokeball) {
+	public static boolean removeTrainerPokeball(int trainerID, String pokeball) {
+		boolean success = false;
 		pokeball = addWhitespace(pokeball, 20);
 
 		try {
@@ -484,6 +539,7 @@ public class QueryEngine {
 				if (pokeballs.contains(pokeball)) {
 					s.executeUpdate("DELETE FROM HasPokeball WHERE TrainerID = " + trainerID
 							+ " AND PokeballName = '" + pokeball + "'");
+					success = true;
 				} else {
 					System.out.println("ERROR: Pokeball does not exist");
 				}
@@ -495,6 +551,8 @@ public class QueryEngine {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
+		return success;
 	}
 
 	/**
