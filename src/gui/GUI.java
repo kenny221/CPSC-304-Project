@@ -24,12 +24,16 @@ import javax.swing.table.DefaultTableModel;
 import app.QueryEngine;
 
 public class GUI {
+	private static boolean adminAccess = false;
+
+	private static final String ADMIN_PASSWORD = "admin";
+
 	/**
 	 * Creates the GUI.
 	 */
 	private static void createGUI() {
 		// Create the main window
-		JFrame frame = new JFrame("PokemonDB");
+		JFrame frame = new JFrame("Pokemon Database");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -41,7 +45,7 @@ public class GUI {
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setOpaque(true);
 		menuBar.setBackground(new Color(230, 230, 250));
-		menuBar.setPreferredSize(new Dimension(800, 20));
+		menuBar.setPreferredSize(new Dimension(500, 20));
 
 		// Create the menus
 		JMenu addMenu = new JMenu("Add");
@@ -58,37 +62,43 @@ public class GUI {
 		menuBar.add(minMenu);
 		JMenu maxMenu = new JMenu("MAX");
 		menuBar.add(maxMenu);
+		JMenu adminMenu = new JMenu("Admin");
+		menuBar.add(adminMenu);
 
 		// Create the Add menu items
 		JMenuItem addMenuItem1 = new JMenuItem("Trainer");
 		addMenuItem1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String name = (String) JOptionPane.showInputDialog(
-						frame, "Enter the name of the trainer", "Customized Dialog",
-						JOptionPane.PLAIN_MESSAGE, null, null, null);
-
-				if (name == null || name.isEmpty() || name.matches("^.*[^a-zA-Z0-9 ].*$")) {
-					name = (String) JOptionPane.showInputDialog(
-							frame, "Please enter a valid name", "Customized Dialog",
+				if (adminAccess) {
+					String name = (String) JOptionPane.showInputDialog(
+							frame, "Enter the name of the trainer", "Customized Dialog",
 							JOptionPane.PLAIN_MESSAGE, null, null, null);
-				}
 
-				if (!(name == null || name.isEmpty() || name.matches("^.*[^a-zA-Z0-9 ].*$"))) {
-					Object[] genders = {"Male", "Female"};
-					String gender = (String) JOptionPane.showInputDialog(
-							frame, "Select the gender of the trainer", "Customized Dialog",
-							JOptionPane.PLAIN_MESSAGE, null, genders, null);
+					if (name == null || name.isEmpty() || name.matches("^.*[^a-zA-Z0-9 ].*$")) {
+						name = (String) JOptionPane.showInputDialog(
+								frame, "Please enter a valid name", "Customized Dialog",
+								JOptionPane.PLAIN_MESSAGE, null, null, null);
+					}
 
-					if (gender != null) {
-						QueryEngine.addTrainer(name, gender);
-						JOptionPane.showMessageDialog(frame, "Success!");
+					if (!(name == null || name.isEmpty() || name.matches("^.*[^a-zA-Z0-9 ].*$"))) {
+						Object[] genders = {"Male", "Female"};
+						String gender = (String) JOptionPane.showInputDialog(
+								frame, "Select the gender of the trainer", "Customized Dialog",
+								JOptionPane.PLAIN_MESSAGE, null, genders, null);
+
+						if (gender != null) {
+							QueryEngine.addTrainer(name, gender);
+							JOptionPane.showMessageDialog(frame, "Success!");
+						} else {
+							JOptionPane.showMessageDialog(frame, "Cancelled");
+						}
+
 					} else {
 						JOptionPane.showMessageDialog(frame, "Cancelled");
 					}
-
 				} else {
-					JOptionPane.showMessageDialog(frame, "Cancelled");
+					JOptionPane.showMessageDialog(frame, "Insufficient privileges");
 				}
 			}
 		});
@@ -305,24 +315,28 @@ public class GUI {
 		removeMenuItem1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String id = (String) JOptionPane.showInputDialog(
-						frame, "Enter the trainer ID", "Customized Dialog",
-						JOptionPane.PLAIN_MESSAGE, null, null, null);
-
-				if (id == null || id.isEmpty() || id.matches("^.*[^0-9].*$")) {
-					id = (String) JOptionPane.showInputDialog(
-							frame, "Please enter a valid trainer ID", "Customized Dialog",
+				if (adminAccess) {
+					String id = (String) JOptionPane.showInputDialog(
+							frame, "Enter the trainer ID", "Customized Dialog",
 							JOptionPane.PLAIN_MESSAGE, null, null, null);
-				}
 
-				if (!(id == null || id.isEmpty() || id.matches("^.*[^0-9].*$"))) {
-					if (QueryEngine.removeTrainer(Integer.parseInt(id))) {
-						JOptionPane.showMessageDialog(frame, "Success!");
+					if (id == null || id.isEmpty() || id.matches("^.*[^0-9].*$")) {
+						id = (String) JOptionPane.showInputDialog(
+								frame, "Please enter a valid trainer ID", "Customized Dialog",
+								JOptionPane.PLAIN_MESSAGE, null, null, null);
+					}
+
+					if (!(id == null || id.isEmpty() || id.matches("^.*[^0-9].*$"))) {
+						if (QueryEngine.removeTrainer(Integer.parseInt(id))) {
+							JOptionPane.showMessageDialog(frame, "Success!");
+						} else {
+							JOptionPane.showMessageDialog(frame, "Failure!");
+						}
 					} else {
-						JOptionPane.showMessageDialog(frame, "Failure!");
+						JOptionPane.showMessageDialog(frame, "Cancelled");
 					}
 				} else {
-					JOptionPane.showMessageDialog(frame, "Cancelled");
+					JOptionPane.showMessageDialog(frame, "Insufficient privileges");
 				}
 			}
 		});
@@ -896,11 +910,44 @@ public class GUI {
 		});
 		maxMenu.add(maxMenuItem2);
 
+		// Create the Admin menu items
+		JMenuItem adminMenuItem1 = new JMenuItem("Login");
+		adminMenuItem1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (adminAccess) {
+					JOptionPane.showMessageDialog(frame, "Already logged in");
+				} else {
+					String password = (String) JOptionPane.showInputDialog(
+							frame, "Enter the admin password", "Customized Dialog",
+							JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+					if (password == null) {
+						// Do nothing
+					} else if (password.isEmpty() || !password.equals(ADMIN_PASSWORD)) {
+						password = (String) JOptionPane.showInputDialog(frame, "Password incorrect, "
+								+ "please try again", "Customized Dialog",
+								JOptionPane.PLAIN_MESSAGE, null, null, null);
+					}
+
+					if (password == null) {
+						// Do nothing
+					} else if (password.equals(ADMIN_PASSWORD)) {
+						adminAccess = true;
+						JOptionPane.showMessageDialog(frame, "Login success");
+					} else {
+						JOptionPane.showMessageDialog(frame, "Cancelled");
+					}
+				}
+			}
+		});
+		adminMenu.add(adminMenuItem1);
+
 		// Create the background
 		JLabel background = new JLabel();
 		background.setOpaque(true);
 		background.setBackground(new Color(135, 206, 250));
-		background.setPreferredSize(new Dimension(800, 600));
+		background.setPreferredSize(new Dimension(500, 300));
 
 		// Set the menu bar and background to the content pane
 		frame.setJMenuBar(menuBar);
