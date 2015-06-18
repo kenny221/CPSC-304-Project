@@ -12,6 +12,10 @@ public class QueryEngine {
 	private static Connection c;
 	private static Statement s;
 
+	// Change the username and password here
+	private static final String USERNAME = "ora_d6x8";
+	private static final String PASSWORD = "a65826083";
+
 	/**
 	 * Adds a new trainer to the database.
 	 * @param name The name of the trainer.
@@ -42,9 +46,6 @@ public class QueryEngine {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
-		// For debugging purposes
-		System.out.println("***addTrainer was executed");
 	}
 
 	/**
@@ -688,7 +689,8 @@ public class QueryEngine {
 
 			// Check if trainer exists
 			if (trainerIDs.contains(id)) {
-				r = s.executeQuery("SELECT * FROM Catches WHERE TrainerID = " + id);
+				r = s.executeQuery("SELECT TrainerID, PokemonID, Name FROM Catches,"
+						+ " Pokemon WHERE TrainerID = " + id + " AND PokemonID = ID");
 			} else {
 				System.out.println("ERROR: Trainer does not exist");
 			}
@@ -972,7 +974,7 @@ public class QueryEngine {
 
 			c = DriverManager.getConnection(
 					"jdbc:oracle:thin:@dbhost.ugrad.cs.ubc.ca:1522:ug",
-					"ora_d6x8", "a65826083");
+					USERNAME, PASSWORD);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
