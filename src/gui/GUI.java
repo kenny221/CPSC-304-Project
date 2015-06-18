@@ -64,6 +64,8 @@ public class GUI {
 		menuBar.add(minMenu);
 		JMenu maxMenu = new JMenu("MAX");
 		menuBar.add(maxMenu);
+		JMenu countMenu = new JMenu("COUNT");
+		menuBar.add(countMenu);
 		JMenu adminMenu = new JMenu("Admin");
 		menuBar.add(adminMenu);
 
@@ -790,8 +792,41 @@ public class GUI {
 		searchMenu.add(searchMenuItem6);
 
 		// Create the Show menu items
-		JMenuItem showMenuItem1 = new JMenuItem("Trainer Pokemon");
+		JMenuItem showMenuItem1 = new JMenuItem("Trainers");
 		showMenuItem1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Object[] options = {"ID", "Name", "Gender", "ID, Name",
+						"ID, Gender", "Name, Gender", "ID, Name, Gender"};
+				String option = (String) JOptionPane.showInputDialog(
+						frame, "Select the desired attributes", "Customized Dialog",
+						JOptionPane.PLAIN_MESSAGE, null, options, null);
+
+				if (option != null) {
+					Object[] genders = {"Male", "Female", "Both"};
+					String gender = (String) JOptionPane.showInputDialog(
+							frame, "Select the desired gender", "Customized Dialog",
+							JOptionPane.PLAIN_MESSAGE, null, genders, null);
+
+					if (gender != null) {
+						JTable table = null;
+
+						try {
+							table = new JTable(buildTableModel(QueryEngine.
+									showAllTrainers(option, gender)));
+						} catch (SQLException exception) {
+							exception.printStackTrace();
+						}
+
+						JOptionPane.showMessageDialog(null, new JScrollPane(table));
+					}
+				}
+			}
+		});
+		showMenu.add(showMenuItem1);
+
+		JMenuItem showMenuItem2 = new JMenuItem("Trainer Pokemon");
+		showMenuItem2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String id = (String) JOptionPane.showInputDialog(
@@ -820,10 +855,10 @@ public class GUI {
 				}
 			}
 		});
-		showMenu.add(showMenuItem1);
+		showMenu.add(showMenuItem2);
 
-		JMenuItem showMenuItem2 = new JMenuItem("Trainer Items");
-		showMenuItem2.addActionListener(new ActionListener() {
+		JMenuItem showMenuItem3 = new JMenuItem("Trainer Items");
+		showMenuItem3.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String id = (String) JOptionPane.showInputDialog(
@@ -852,10 +887,10 @@ public class GUI {
 				}
 			}
 		});
-		showMenu.add(showMenuItem2);
+		showMenu.add(showMenuItem3);
 
-		JMenuItem showMenuItem3 = new JMenuItem("Trainer Unowned Pokemon");
-		showMenuItem3.addActionListener(new ActionListener() {
+		JMenuItem showMenuItem4 = new JMenuItem("Trainer Unowned Pokemon");
+		showMenuItem4.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String id = (String) JOptionPane.showInputDialog(
@@ -884,10 +919,10 @@ public class GUI {
 				}
 			}
 		});
-		showMenu.add(showMenuItem3);
+		showMenu.add(showMenuItem4);
 
 		// Create the AVG menu items
-		JMenuItem avgMenuItem1 = new JMenuItem("Pokemon Species Height");
+		JMenuItem avgMenuItem1 = new JMenuItem("Height by Pokemon Species");
 		avgMenuItem1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -918,7 +953,7 @@ public class GUI {
 		});
 		avgMenu.add(avgMenuItem1);
 
-		JMenuItem avgMenuItem2 = new JMenuItem("Pokemon Species Weight");
+		JMenuItem avgMenuItem2 = new JMenuItem("Weight by Pokemon Species");
 		avgMenuItem2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1018,6 +1053,38 @@ public class GUI {
 			}
 		});
 		maxMenu.add(maxMenuItem2);
+
+		// Create the COUNT menu items
+		JMenuItem countMenuItem1 = new JMenuItem("Pokemon by Species");
+		countMenuItem1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Object[] options = {"Species with the MINIMUM count",
+				"Species with the MAXIMUM count"};
+				String option = (String) JOptionPane.showInputDialog(
+						frame, "Select the option you want", "Customized Dialog",
+						JOptionPane.PLAIN_MESSAGE, null, options, null);
+
+				if (option != null) {
+					JTable table = null;
+
+					try {
+						if (option.contains("MINIMUM")) {
+							table = new JTable(buildTableModel(QueryEngine.
+									findSpeciesWithMinimumCount()));
+						} else {
+							table = new JTable(buildTableModel(QueryEngine.
+									findSpeciesWithMaximumCount()));
+						}
+					} catch (SQLException exception) {
+						exception.printStackTrace();
+					}
+
+					JOptionPane.showMessageDialog(null, new JScrollPane(table));
+				}
+			}
+		});
+		countMenu.add(countMenuItem1);
 
 		// Create the Admin menu items
 		JMenuItem adminMenuItem1 = new JMenuItem("Login");

@@ -671,6 +671,29 @@ public class QueryEngine {
 	}
 
 	/**
+	 * Show all the trainers with the specified attributes and gender.
+	 * @return The rows containing the trainers' information.
+	 */
+	public static ResultSet showAllTrainers(String attributes, String gender) {
+		ResultSet r = null;
+
+		try {
+			s = c.createStatement();
+			String query = "SELECT " + attributes + " FROM Trainer";
+
+			if (!gender.equals("Both")) {
+				query += " WHERE Gender = '" + gender + "'";
+			}
+
+			r = s.executeQuery(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return r;
+	}
+
+	/**
 	 * Show all of the Pokemon owned by the trainer with the specified ID.
 	 * @param id The ID of the trainer.
 	 * @return The rows containing the Pokemon owned by the specified trainer.
@@ -772,7 +795,7 @@ public class QueryEngine {
 
 			// Check if trainer exists
 			if (ids.contains(id)) {
-				s.executeQuery("UPDATE Trainer SET Name = '" + name + "' WHERE ID = " + id);
+				r = s.executeQuery("UPDATE Trainer SET Name = '" + name + "' WHERE ID = " + id);
 				success = true;
 			} else {
 				System.out.println("ERROR: Trainer does not exist");
@@ -780,7 +803,7 @@ public class QueryEngine {
 
 			s.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			success = false;
 		}
 
 		return success;
@@ -923,6 +946,42 @@ public class QueryEngine {
 			s = c.createStatement();
 			r = s.executeQuery("SELECT * FROM Pokemon P WHERE P.weight"
 					+ " = (SELECT MAX(P.weight) FROM Pokemon P)");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return r;
+	}
+
+	/**
+	 * Find the Pokemon species whose count is the minimum over all species.
+	 * @return The rows containing the Pokemon information.
+	 */
+	public static ResultSet findSpeciesWithMinimumCount() {
+		ResultSet r = null;
+
+		try {
+			s = c.createStatement();
+			r = s.executeQuery("SELECT Species, Count FROM SpeciesCount WHERE"
+					+ " Count IN (SELECT MIN(Count) FROM SpeciesCount)");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return r;
+	}
+
+	/**
+	 * Find the Pokemon species whose count is the maximum over all species.
+	 * @return The rows containing the Pokemon information.
+	 */
+	public static ResultSet findSpeciesWithMaximumCount() {
+		ResultSet r = null;
+
+		try {
+			s = c.createStatement();
+			r = s.executeQuery("SELECT Species, Count FROM SpeciesCount WHERE"
+					+ " Count IN (SELECT MAX(Count) FROM SpeciesCount)");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
